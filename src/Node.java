@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Node implements Comparable<Node> {
 
@@ -31,6 +32,21 @@ public class Node implements Comparable<Node> {
 
     public void addKey(Integer value) {
         keys.add(value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return Objects.equals(keys, node.keys) &&
+                Objects.equals(kids, node.kids) &&
+                Objects.equals(parent, node.parent);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(keys, kids, parent);
     }
 
     @Override

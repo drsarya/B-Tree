@@ -1,6 +1,6 @@
 public class test {
     public static void main(String[] args) {
-        Tree tree = new Tree(3);
+        Tree tree = new Tree(4);
         tree.add(1);
         tree.add(2);
         tree.add(3);
@@ -27,6 +27,6 @@ public class test {
         tree.add(5);
 
 
-      //  Printer.print2(tree);
+        Printer.print2(tree);
     }
 }

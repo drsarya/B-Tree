@@ -1,62 +1,50 @@
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Printer {
     private static int levels = 0;
     private static List<String> levelsStrings = new ArrayList<>();
+    private static List<List<Node>> nodes = new ArrayList<>();
 
     public static void print2(Tree tree) {
+        List<String> levels = new ArrayList<>();
+
         newObhod(tree.root);
-        for (int i = levelsStrings.size() - 1; i > 0; i--) {
-            String newParent = refactorParent(levelsStrings.get(i), levelsStrings.get(i - 1));
-            levelsStrings.set(i - 1, newParent);
+        levels.add(takeNodeVisual( (tree.root.getKeys())));
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            String newLevelDescription = createString(nodes.get(i));
+            levels.add(newLevelDescription);
         }
-        for (int i = 0; i < levelsStrings.size(); i++) {
-            System.out.println(levelsStrings.get(i));
+        for (int i = 0; i <levels.size() ; i++) {
+            System.out.println(levels.get(i));
         }
     }
 
-    private static List<Integer> getIndexesOfSpace(String str) {
-        List<Integer> list = new ArrayList<>();
-        String newStr = str.trim();
-        int delta = str.length() - newStr.length();
-
-        for (int i = 0; i < newStr.length(); i++) {
-            int lastInd = i;
-            while (lastInd < newStr.length() && String.valueOf(newStr.charAt(lastInd)).equals(" ")) {
-                lastInd++;
+    private static String createString(List<Node> nodes) {
+        StringBuilder commonParent = new StringBuilder();
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int j = 0; j < nodes.get(i).getKids().size(); j++) {
+                commonParent.append(takeNodeVisual(nodes.get(i).getKids().get(j).getKeys()));
             }
-            if (lastInd != i) {
-                list.add(delta + i + (lastInd - i) / 2);
-                i = lastInd;
-            }
-
+            commonParent.append("  ");
         }
-        return list;
+        return commonParent.toString();
     }
 
-    private static String refactorParent(String down, String up) {
-
-        String[] upArr = up.split(" ");
-        StringBuilder newParent = new StringBuilder();
-        List<Integer> indexes = getIndexesOfSpace(down);
-        int indParent = 0;
-        for (int i = 0; i < indexes.size(); i++) {
-
-            if (i % upArr.length == 0) {
-                for (int j = i; j < indexes.get(i); j++) {
-                    newParent.append(" ");
-                }
-                newParent.append(upArr[indParent]);
-                indParent++;
-            }
-        }
-        return newParent.toString();
-
+    private static String takeNodeVisual(List<Integer> keys) {
+        StringBuilder commonParent = new StringBuilder();
+        commonParent.append("|");
+        commonParent.append(getKeysAsString(keys));
+        commonParent.append("| ");
+        return commonParent.toString();
     }
 
     private static void newObhod(Node node) {
-        addNewEl(levels, getKeysAsString(node.getKeys()));
+        if (nodes.size() == levels) {
+            nodes.add(levels, new ArrayList<>());
+        }
+        nodes.get(levels).add(node);
         for (int i = 0; i < node.getKids().size(); i++) {
             levels++;
             newObhod(node.getKids().get(i));
@@ -74,12 +62,4 @@ public class Printer {
         return s.toString();
     }
 
-    private static void addNewEl(int level, String str) {
-        if (levelsStrings.size() > level) {
-            String newState = levelsStrings.get(level) + " " + str;
-            levelsStrings.set(level, newState);
-        } else {
-            levelsStrings.add(level, str);
-        }
-    }
 }
