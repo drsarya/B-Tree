@@ -5,9 +5,9 @@ import java.util.Objects;
 
 public class Node implements Comparable<Node> {
 
-    private List<Integer> keys = new ArrayList<>();
-    private List<Node> kids = new ArrayList<>();
-    public Node parent;
+    private final List<Integer> keys = new ArrayList<>();
+    private final List<Node> kids = new ArrayList<>();
+    public Node parent = null;
 
     public List<Integer> getKeys() {
         return keys;
@@ -17,23 +17,35 @@ public class Node implements Comparable<Node> {
         return kids;
     }
 
-    public Node getParent() {
-        return parent;
+
+    public void addKids(List<Node> listNodes) {
+        for (Node n : listNodes) {
+            n.parent = this;
+            kids.add(n);
+        }
+        Collections.sort(getKids());
     }
 
-    public void setParent(Node parent) {
-        this.parent = parent;
-    }
-
-    public void addChildren(Node node) {
-        node.setParent(this);
-        kids.add(node);
+    public void addKey(List<Integer> value) {
+        keys.addAll(value);
+        Collections.sort(getKeys());
     }
 
     public void addKey(Integer value) {
         keys.add(value);
+        Collections.sort(getKeys());
     }
 
+    public void removeChild(List<Integer> keys){
+
+        for (int i = 0; i <  getKids().size(); i++) {
+        if ( getKids().get(i).getKeys().size() == keys.size() &&  getKids().get(i).getKeys().containsAll(keys)) {
+            getKids().remove(i);
+            break;
+        }
+    }
+
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,6 +63,6 @@ public class Node implements Comparable<Node> {
 
     @Override
     public int compareTo(Node o) {
-        return this.getKeys().get(0)-  o.getKeys().get(0);
+        return this.getKeys().get(0) - o.getKeys().get(0);
     }
 }

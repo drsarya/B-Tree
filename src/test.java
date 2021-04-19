@@ -4,6 +4,7 @@ public class test {
         tree.add(1);
         tree.add(2);
         tree.add(3);
+
         tree.add(4);
         tree.add(5);
         tree.add(6);
@@ -27,6 +28,7 @@ public class test {
         tree.add(5);
 
 
-        Printer.print2(tree);
+        Printer.printTree(tree);
+        System.out.println(tree.find(1) );
     }
 }

@@ -1,11 +1,16 @@
 import java.util.*;
 
 public class Tree {
-    Node root;
-    int weight;
+    private Node root;
+    private final int weight;
+    private boolean stateOfSearch = false;
 
     Tree(Integer weight) {
         this.weight = weight;
+    }
+
+    public Node getRoot() {
+        return root;
     }
 
     public void add(int value) {
@@ -13,89 +18,77 @@ public class Tree {
             root = new Node();
             root.getKeys().add(value);
         } else {
-
-            obhod(root, value);
+            walker(root, value);
         }
-
-
     }
 
-    private void obhod(Node node, int value) {
+    public boolean find(Integer value) {
+        return searchNode(value, root);
+    }
+
+    private void walker(Node node, int value) {
         for (int i = 0; i < node.getKeys().size(); i++) {
             if (value <= node.getKeys().get(i) || value >= node.getKeys().get(i) && (node.getKeys().size() - i == 1 || value <= node.getKeys().get(i + 1))) {
                 if (node.getKids().isEmpty()) {
-                    node.getKeys().add(value);
-                    Collections.sort(node.getKeys());
-                    Collections.sort(node.getKids());
+                    node.addKey(value);
                     check(node.getKeys(), node);
-                    return;
                 } else {
                     if (value <= node.getKeys().get(i)) {
-                        obhod(node.getKids().get(i), value);
-                        return;
+                        walker(node.getKids().get(i), value);
                     } else {
-                        obhod(node.getKids().get(i + 1), value);
-                        return;
+                        walker(node.getKids().get(i + 1), value);
                     }
                 }
+                return;
             }
         }
     }
 
-
     private void check(List<Integer> keys, Node currentNode) {
-
         if (keys.size() > weight - 1) {
-            Node n = new Node();
-            n.setParent(currentNode.parent);
-            n.getKeys().add(keys.get(1));
             Node childLeft = new Node();
-            childLeft.getKeys().add(keys.get(0));
             Node childRight = new Node();
-            for (int i = 0; i < keys.size(); i++) {
-                if (i >= 2) childRight.getKeys().add(keys.get(i));
-            }
+            childLeft.addKey(keys.get(0));
+            childRight.addKey(keys.subList(2, keys.size()));
             if (currentNode.getKids().size() > 0) {
-                childLeft.addChildren(currentNode.getKids().get(0));
-                childLeft.addChildren(currentNode.getKids().get(1));
-                for (int i = 0; i < currentNode.getKids().size(); i++) {
-                    if (i >= 2) childRight.addChildren(currentNode.getKids().get(i));
-                }
+                childLeft.addKids(Arrays.asList(currentNode.getKids().get(0), currentNode.getKids().get(1)));
+                childRight.addKids(currentNode.getKids().subList(2, currentNode.getKids().size()));
             }
-            n.getKids().add(childLeft);
-            n.getKids().add(childRight);
-
             if (currentNode.parent == null) {
-                childLeft.setParent(n);
-                childRight.setParent(n);
-                Collections.sort(n.getKids());
+                Node n = new Node();
+                n.addKey(keys.get(1));
+                n.addKids(Arrays.asList(childLeft, childRight));
                 root = n;
             } else {
-                currentNode.parent.getKeys().add(keys.get(1));
-                currentNode.parent.getKids().remove(findChildren(currentNode.parent, keys));
-                childLeft.setParent(currentNode.parent);
-                childRight.setParent(currentNode.parent);
-                currentNode.parent.getKids().add(childLeft);
-                currentNode.parent.getKids().add(childRight);
-                Collections.sort(currentNode.parent.getKids());
-                Collections.sort(currentNode.parent.getKeys());
+                currentNode.parent.addKey(keys.get(1));
+                currentNode.parent.removeChild(keys);
+                currentNode.parent.addKids(Arrays.asList(childLeft, childRight));
                 check(currentNode.parent.getKeys(), currentNode.parent);
             }
         }
     }
 
-    private int findChildren(Node node, List<Integer> keys) {
-        for (int i = 0; i < node.getKids().size(); i++) {
-            if (node.getKids().get(i).getKeys().size() == keys.size() && node.getKids().get(i).getKeys().containsAll(keys)) {
-                return i;
-            }
-        }
-        return -1;
-    }
 
     public void delete() {
     }
 
-    public void find() {
+    private boolean searchNode(Integer value, Node node) {
+        for (int i = 0; i < node.getKeys().size(); i++) {
+            if (value < node.getKeys().get(i)
+                    || value > node.getKeys().get(i)
+                    && (node.getKeys().size() - i == 1 || value < node.getKeys().get(i + 1))) {
+                if (value <= node.getKeys().get(i)) {
+                    if (!node.getKids().isEmpty())
+                        searchNode(value, node.getKids().get(i));
+                } else {
+                    if (!node.getKids().isEmpty())
+                        searchNode(value, node.getKids().get(i + 1));
+                }
+            } else if (value.equals(node.getKeys().get(i))) {
+                stateOfSearch = true;
+                break;
+            }
+        }
+        return stateOfSearch;
     }
 }
