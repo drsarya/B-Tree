@@ -3,7 +3,7 @@ import java.util.*;
 public class Tree {
     private Node root;
     private final int weight;
-    private boolean stateOfSearch = false;
+    private Node findNode = null;
 
     Tree(Integer weight) {
         this.weight = weight;
@@ -16,14 +16,24 @@ public class Tree {
     public void add(int value) {
         if (root == null) {
             root = new Node();
-            root.getKeys().add(value);
+            root.addKey(value);
         } else {
             walker(root, value);
         }
     }
 
-    public boolean find(Integer value) {
-        return searchNode(value, root);
+    public Node find(Integer value) {
+        findNode = null;
+        searchNode(value, root);
+        return findNode;
+
+    }
+
+    public boolean search(Integer value) {
+        findNode = null;
+        searchNode(value, root);
+        return findNode != null;
+
     }
 
     private void walker(Node node, int value) {
@@ -68,27 +78,51 @@ public class Tree {
         }
     }
 
-
-    public void delete() {
+    public void deleteKey(Integer value) {
+        obhod(value);
     }
 
-    private boolean searchNode(Integer value, Node node) {
+    private void obhod(Integer value) {
+        find(value);
+        if (findNode == null) {
+            System.out.println("Элемент не найден");
+        } else {
+            if (findNode.getKeys().size() > 1 && findNode.getKids().isEmpty()) {
+                findNode.getKeys().remove(value);
+            } else {
+                if (findNode.parent != null) {
+                    if (findNode.parent.getKeys().size() > 1) {
+
+                    } else {
+                        System.out.println(value + " refactor node");
+                    }
+                } else {
+                    System.out.println(value + " parent is null");
+                }
+            }
+        }
+    }
+
+    private void searchNode(Integer value, Node node) {
         for (int i = 0; i < node.getKeys().size(); i++) {
             if (value < node.getKeys().get(i)
                     || value > node.getKeys().get(i)
                     && (node.getKeys().size() - i == 1 || value < node.getKeys().get(i + 1))) {
                 if (value <= node.getKeys().get(i)) {
-                    if (!node.getKids().isEmpty())
+                    if (!node.getKids().isEmpty()) {
                         searchNode(value, node.getKids().get(i));
+                        return;
+                    }
                 } else {
-                    if (!node.getKids().isEmpty())
+                    if (!node.getKids().isEmpty()) {
                         searchNode(value, node.getKids().get(i + 1));
+                        return;
+                    }
                 }
             } else if (value.equals(node.getKeys().get(i))) {
-                stateOfSearch = true;
-                break;
+                findNode = node;
+                return;
             }
         }
-        return stateOfSearch;
     }
 }

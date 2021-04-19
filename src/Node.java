@@ -36,16 +36,15 @@ public class Node implements Comparable<Node> {
         Collections.sort(getKeys());
     }
 
-    public void removeChild(List<Integer> keys){
-
-        for (int i = 0; i <  getKids().size(); i++) {
-        if ( getKids().get(i).getKeys().size() == keys.size() &&  getKids().get(i).getKeys().containsAll(keys)) {
-            getKids().remove(i);
-            break;
+    public void removeChild(List<Integer> keys) {
+        for (int i = 0; i < getKids().size(); i++) {
+            if (getKids().get(i).getKeys().size() == keys.size() && getKids().get(i).getKeys().containsAll(keys)) {
+                getKids().remove(i);
+                break;
+            }
         }
     }
 
-    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

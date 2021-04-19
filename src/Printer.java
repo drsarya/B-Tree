@@ -3,11 +3,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Printer {
-    private static int levels = 0;
-    private static List<List<Node>> nodes = new ArrayList<>();
+    private int levels = 0;
+    private List<List<Node>> nodes;
 
-    public static void printTree(Tree tree) {
+    public void printTree(Tree tree) {
         List<String> levels = new ArrayList<>();
+        nodes = new ArrayList<>();
         walker(tree.getRoot());
         levels.add(takeNodeVisual((tree.getRoot().getKeys())));
         for (int i = 0; i < nodes.size() - 1; i++) {
@@ -19,7 +20,7 @@ public class Printer {
         }
     }
 
-    private static String levelTreeToString(List<Node> nodes) {
+    private String levelTreeToString(List<Node> nodes) {
         StringBuilder commonParent = new StringBuilder();
         for (Node node : nodes) {
             for (int j = 0; j < node.getKids().size(); j++) {
@@ -30,7 +31,7 @@ public class Printer {
         return commonParent.toString();
     }
 
-    private static void walker(Node node) {
+    private void walker(Node node) {
         if (nodes.size() == levels) {
             nodes.add(levels, new ArrayList<>());
         }
@@ -42,11 +43,11 @@ public class Printer {
         }
     }
 
-    private static String takeNodeVisual(List<Integer> keys) {
+    private String takeNodeVisual(List<Integer> keys) {
         return "|" + getKeysAsString(keys) + "| ";
     }
 
-    private static String getKeysAsString(List<Integer> keys) {
+    private String getKeysAsString(List<Integer> keys) {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < keys.size(); i++) {
             s.append(keys.get(i));
