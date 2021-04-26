@@ -5,9 +5,13 @@ import java.util.Objects;
 
 public class Node implements Comparable<Node> {
 
-    private final List<Integer> keys = new ArrayList<>();
-    private final List<Node> kids = new ArrayList<>();
+    private List<Integer> keys = new ArrayList<>();
+    private List<Node> kids = new ArrayList<>();
     public Node parent = null;
+
+    public void setParent(Node parent) {
+        this.parent = parent;
+    }
 
     public List<Integer> getKeys() {
         return keys;
@@ -17,12 +21,27 @@ public class Node implements Comparable<Node> {
         return kids;
     }
 
+    public Node getChild(Integer index) {
+        return kids.get(index);
+    }
 
     public void addKids(List<Node> listNodes) {
         for (Node n : listNodes) {
             n.parent = this;
             kids.add(n);
         }
+        Collections.sort(getKids());
+    }
+
+    public int getIndex(Node node) {
+
+        return getKids().indexOf(node);
+    }
+
+    public void addChild(Node listNodes) {
+
+        listNodes.parent = this;
+        kids.add(listNodes);
         Collections.sort(getKids());
     }
 
@@ -36,6 +55,16 @@ public class Node implements Comparable<Node> {
         Collections.sort(getKeys());
     }
 
+    public Node getParent() {
+        return parent;
+    }
+
+    public void reload(List<Integer> keys) {
+        this.keys = new ArrayList<>();
+        this.keys.addAll(keys);
+        kids = new ArrayList<>();
+    }
+
     public void removeChild(List<Integer> keys) {
         for (int i = 0; i < getKids().size(); i++) {
             if (getKids().get(i).getKeys().size() == keys.size() && getKids().get(i).getKeys().containsAll(keys)) {
@@ -43,6 +72,14 @@ public class Node implements Comparable<Node> {
                 break;
             }
         }
+    }
+    public void removeChild(int index) {
+       getKids().remove(index);
+
+    }
+    public void removeKey(int index) {
+
+        keys.remove(index);
     }
 
     @Override
