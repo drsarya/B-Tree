@@ -101,7 +101,7 @@ public class Tree {
                 }
             } else if (value.equals(node.getKeys().get(i))) {
                 // node = checkState(node, value);
-                if(node.getParent()==null&& node.getKeys().size()==1)
+                if (node.getParent() == null && node.getKeys().size() == 1 && node.getKids().isEmpty())
                     return;
                 checkState(node, value);
                 return;
@@ -149,7 +149,7 @@ public class Tree {
 
     private void checkNearNodes(Node node) {
         Node parent = node.getParent();
-        if(parent==null){
+        if (parent == null) {
             node.getChild(0).setParent(null);
             root = node.getChild(0);
             return;
@@ -160,23 +160,32 @@ public class Tree {
         if (index > 0 && parent.getKids().get(index - 1).getKeys().size() > 1) {
             //если у левого ребенка ключей больше минимального
             //set new value for current node
+
             node.addKey(parent.getKeys().get(index - 1));
             Node leftChild = parent.getChild(index - 1);
             Integer maxValueOfLeftChild = leftChild.getKeys().get(leftChild.getKeys().size() - 1);
             parent.getKeys().set(index - 1, maxValueOfLeftChild);
             //delete key from left brother
             leftChild.removeKey(leftChild.getKeys().size() - 1);
-
+            if (leftChild.getKids().size() > 0) {
+                node.addChild(leftChild.getKids().get(leftChild.getKids().size() - 1));
+                leftChild.removeChild(leftChild.getKids().size() - 1);
+            }
         } else if (index + 1 < parent.getKids().size() && parent.getChild(index + 1).getKeys().size() > 1) {
             //если у правого ребенка ключей больше минимального
             //set new value for current node
             node.addKey(parent.getKeys().get(0));
             Node rightChild = parent.getChild(index + 1);
+
             Integer minValueOfRightChild = rightChild.getKeys().get(0);
             //set new value for parent
             parent.getKeys().set(0, minValueOfRightChild);
             //delete key from right brother
             rightChild.removeKey(0);
+            if (rightChild.getKids().size() > 0) {
+                node.addChild(rightChild.getKids().get(0));
+                rightChild.removeChild(0);
+            }
         } else {
             //поделиться ключом некому
             //спускаем - мержим рукурсивно передавая новый нод и батю
