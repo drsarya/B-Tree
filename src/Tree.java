@@ -111,28 +111,49 @@ public class Tree {
 
     private void checkState(Node node, Integer value) {
 
-        //  find(value);
         if (node == null) {
             System.out.println("Элемент не найден");
         } else {
-            //node.getKeys().remove(value);
-
-
             if (node.getKids().isEmpty()) {
                 node.getKeys().remove(value);
                 if (node.getKeys().size() == 0) {
                     checkNearNodes(node);
                 }
                 final String a = "Лист";
-            } else if (node.getParent() == null) {
-                final String b = "Корень";
             } else {
-                final String c = "центральный";
+                final String b = "Центральный";
+                merge(node, value);
             }
-
         }
+    }
 
+    private void merge(Node node, Integer value) {
+        int index = node.getIndexFromKeys(value);
+        node.removeKey(index);
+        Node childLeft = node.getChild(index);
+        Node childRight = node.getChild(index + 1);
+        childLeft.addKey(childRight.getKeys());
 
+        //Добавление детей в левый нод
+        int lastSize = 1;
+        for (int i = 0; i < childRight.getKids().size(); i++) {
+            if (i == 0) {
+                //пересечение детей левого и правого нодов
+                childLeft.getChild(childLeft.getKids().size() - 1).addKey(childRight.getChild(i).getKeys());
+                lastSize = childLeft.getKids().size();
+            } else {
+                //дети правого нода
+                childLeft.addChild(childRight.getKids().get(i));
+            }
+        }
+        node.removeChild(index + 1);
+        if (childLeft.getKids().size() > 0 && childLeft.getChild(lastSize - 1).getKeys().size() > weight - 1
+                || childLeft.getKeys().size() > weight - 1) {
+            //пересечение больше M-1 или в левой ноде ключей больше положенного
+            check(childLeft.getChild(lastSize - 1).getKeys(), childLeft.getChild(lastSize - 1));
+        } else if (childLeft.getParent().getKeys().isEmpty()) {
+            checkNearNodes(childLeft.getParent());
+        }
     }
 
     private void checkNearNodes(Node node) {
@@ -142,13 +163,13 @@ public class Tree {
             root = node.getChild(0);
             return;
         }
-        Integer index = node.getParent().getIndex(node);
+        //index from parentNode
+        int index = node.getParent().getIndexFromParent(node);
 
         if (node.getKeys().size() != 0) return;
         if (index > 0 && parent.getKids().get(index - 1).getKeys().size() > 1) {
             //если у левого ребенка ключей больше минимального
             //set new value for current node
-
             node.addKey(parent.getKeys().get(index - 1));
             Node leftChild = parent.getChild(index - 1);
             Integer maxValueOfLeftChild = leftChild.getKeys().get(leftChild.getKeys().size() - 1);
@@ -178,23 +199,16 @@ public class Tree {
             }
         } else {
             //поделиться ключом некому
-            //спускаем - мержим рукурсивно передавая новый нод и батю
+            //спускаем парент - мержим
             Node n = new Node();
             n.addKids(node.getKids());
-            if (index == 0 || index == 1) {
-                n.addKey(parent.getKeys().get(0));
-                parent.removeKey(0);
-                if (index == 0) {
-                    n.addKids(parent.getChild(index + 1).getKids());
-                    n.addKey(parent.getChild(index + 1).getKeys().get(0));
-                    parent.removeChild(index + 1);
-                    parent.removeChild(index);
-                } else {
-                    n.addKids(parent.getChild(0).getKids());
-                    n.addKey(parent.getChild(0).getKeys().get(0));
-                    parent.removeChild(index);
-                    parent.removeChild(0);
-                }
+            if (index == 0) {
+                n.addKids(parent.getChild(index + 1).getKids());
+                n.addKey(parent.getKeys().get(index));
+                parent.removeKey(index);
+                n.addKey(parent.getChild(index + 1).getKeys().get(0));
+                parent.removeChild(index + 1);
+                parent.removeChild(index);
             } else {
                 n.addKids(parent.getChild(index - 1).getKids());
                 n.addKey(parent.getKeys().get(index - 1));
@@ -203,13 +217,11 @@ public class Tree {
                 parent.removeChild(index);
                 parent.removeChild(index - 1);
             }
-
             parent.addChild(n);
             if (parent.getKeys().size() == 0) {
                 checkNearNodes(parent);
             }
         }
-
     }
 
 

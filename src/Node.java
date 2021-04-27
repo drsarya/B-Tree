@@ -33,9 +33,14 @@ public class Node implements Comparable<Node> {
         Collections.sort(getKids());
     }
 
-    public int getIndex(Node node) {
+    public int getIndexFromParent(Node node) {
 
         return getKids().indexOf(node);
+    }
+
+    public int getIndexFromKeys(Integer value) {
+
+        return getKeys().indexOf(value);
     }
 
     public void addChild(Node listNodes) {
@@ -73,10 +78,12 @@ public class Node implements Comparable<Node> {
             }
         }
     }
+
     public void removeChild(int index) {
-       getKids().remove(index);
+        getKids().remove(index);
 
     }
+
     public void removeKey(int index) {
 
         keys.remove(index);
