@@ -58,25 +58,28 @@ public class Tree {
         if (keys.size() > weight - 1) {
             Node childLeft = new Node();
             Node childRight = new Node();
-            childLeft.addKey(keys.get(0));
-            childRight.addKey(keys.subList(2, keys.size()));
+            int half = keys.size()/2;
+
+            childLeft.addKey(keys.subList(0, half));
+            childRight.addKey(keys.subList(half+1, keys.size()));
             if (currentNode.getKids().size() > 0) {
-                childLeft.addKids(Arrays.asList(currentNode.getKids().get(0), currentNode.getKids().get(1)));
-                childRight.addKids(currentNode.getKids().subList(2, currentNode.getKids().size()));
+                childLeft.addKids(currentNode.getKids().subList(0,half+1));
+                childRight.addKids( currentNode.getKids().subList(half+1, currentNode.getKids().size()));
             }
             if (currentNode.parent == null) {
                 Node n = new Node();
-                n.addKey(keys.get(1));
+                n.addKey(keys.get(half));
                 n.addKids(Arrays.asList(childLeft, childRight));
                 root = n;
             } else {
-                currentNode.parent.addKey(keys.get(1));
+                currentNode.parent.addKey(keys.get(half));
                 currentNode.parent.removeChild(keys);
                 currentNode.parent.addKids(Arrays.asList(childLeft, childRight));
                 check(currentNode.parent.getKeys(), currentNode.parent);
             }
         }
     }
+
 
     public void deleteKey(Integer value) {
         find(value);
@@ -135,7 +138,7 @@ public class Tree {
         childLeft.addKey(childRight.getKeys());
 
         //Добавление детей в левый нод
-        int lastSize = 1;
+        int lastSize = -1;
         for (int i = 0; i < childRight.getKids().size(); i++) {
             if (i == 0) {
                 //пересечение детей левого и правого нодов
@@ -147,10 +150,11 @@ public class Tree {
             }
         }
         node.removeChild(index + 1);
-        if (childLeft.getKids().size() > 0 && childLeft.getChild(lastSize - 1).getKeys().size() > weight - 1
-                || childLeft.getKeys().size() > weight - 1) {
-            //пересечение больше M-1 или в левой ноде ключей больше положенного
+        if (childLeft.getKids().size() > 0 && childLeft.getChild(lastSize - 1).getKeys().size() > weight - 1) {
+            //пересечение больше M-1
             check(childLeft.getChild(lastSize - 1).getKeys(), childLeft.getChild(lastSize - 1));
+        } else if (childLeft.getKeys().size() > weight - 1) {
+            check(childLeft.getKeys(), childLeft);
         } else if (childLeft.getParent().getKeys().isEmpty()) {
             checkNearNodes(childLeft.getParent());
         }
@@ -164,7 +168,7 @@ public class Tree {
             return;
         }
         //index from parentNode
-        int index = node.getParent().getIndexFromParent(node);
+        Integer index = node.getParent().getIndexFromParent(node);
 
         if (node.getKeys().size() != 0) return;
         if (index > 0 && parent.getKids().get(index - 1).getKeys().size() > 1) {
@@ -218,7 +222,7 @@ public class Tree {
                 parent.removeChild(index - 1);
             }
             parent.addChild(n);
-            if (parent.getKeys().size() == 0) {
+            if (parent.getKeys().isEmpty()) {
                 checkNearNodes(parent);
             }
         }

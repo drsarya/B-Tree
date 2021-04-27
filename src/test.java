@@ -1,6 +1,7 @@
 public class test {
     public static void main(String[] args) {
         Tree tree = new Tree(4);
+        Printer p = new Printer();
         tree.add(1);
         tree.add(2);
         tree.add(3);
@@ -19,15 +20,14 @@ public class test {
         tree.add(16);
         tree.add(7);
         tree.add(9);
-//        tree.add(19);
-//        tree.add(20);
-//        tree.add(21);
-//        tree.add(22);
-//        tree.add(23);
-//        tree.add(24);
+        tree.add(19);
+        tree.add(20);
+        tree.add(21);
+        tree.add(22);
+        tree.add(23);
+        tree.add(24);
 
 
-        Printer p = new Printer();
         p.printTree(tree);
 
 //        System.out.println(tree.search(1));
@@ -39,14 +39,14 @@ public class test {
 //        tree.deleteKey(6);tree.deleteKey(7);
 //        tree.deleteKey(8);tree.deleteKey(9);
 //        tree.deleteKey(1);
-        tree.deleteKey(1);
 
-        p.printTree(tree);
+
+         tree.deleteKey(9);
+
 
 //        tree.deleteKey(3);
 //        tree.deleteKey(4);
 //        tree.deleteKey(10);
-
 
 
 //        tree.add(1);
