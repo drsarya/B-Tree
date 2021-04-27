@@ -131,19 +131,7 @@ public class Tree {
             }
 
         }
-        //  return cheeck(node, value);
 
-
-//                if (findNode.parent != null) {
-//                    if (findNode.parent.getKeys().size() > 1) {
-//                    } else {
-//                        System.out.println(value + " refactor node");
-//                    }
-//                } else {
-//                    System.out.println(value + " parent is null");
-//                }
-//            if (findNode.getKids().isEmpty()) {
-//            }
 
     }
 
@@ -168,21 +156,23 @@ public class Tree {
             //delete key from left brother
             leftChild.removeKey(leftChild.getKeys().size() - 1);
             if (leftChild.getKids().size() > 0) {
+                //После соединения перекинуть лишнего ребенка на нод
                 node.addChild(leftChild.getKids().get(leftChild.getKids().size() - 1));
                 leftChild.removeChild(leftChild.getKids().size() - 1);
             }
         } else if (index + 1 < parent.getKids().size() && parent.getChild(index + 1).getKeys().size() > 1) {
             //если у правого ребенка ключей больше минимального
             //set new value for current node
-            node.addKey(parent.getKeys().get(0));
+            node.addKey(parent.getKeys().get(index));
             Node rightChild = parent.getChild(index + 1);
 
             Integer minValueOfRightChild = rightChild.getKeys().get(0);
             //set new value for parent
-            parent.getKeys().set(0, minValueOfRightChild);
+            parent.getKeys().set(index, minValueOfRightChild);
             //delete key from right brother
             rightChild.removeKey(0);
             if (rightChild.getKids().size() > 0) {
+                //После соединения перекинуть лишнего ребенка на нод
                 node.addChild(rightChild.getKids().get(0));
                 rightChild.removeChild(0);
             }
@@ -190,93 +180,38 @@ public class Tree {
             //поделиться ключом некому
             //спускаем - мержим рукурсивно передавая новый нод и батю
             Node n = new Node();
+            n.addKids(node.getKids());
             if (index == 0 || index == 1) {
                 n.addKey(parent.getKeys().get(0));
                 parent.removeKey(0);
                 if (index == 0) {
                     n.addKids(parent.getChild(index + 1).getKids());
-                    n.addKids(node.getKids());
                     n.addKey(parent.getChild(index + 1).getKeys().get(0));
                     parent.removeChild(index + 1);
                     parent.removeChild(index);
                 } else {
                     n.addKids(parent.getChild(0).getKids());
-                    n.addKids(node.getKids());
                     n.addKey(parent.getChild(0).getKeys().get(0));
                     parent.removeChild(index);
                     parent.removeChild(0);
                 }
             } else {
                 n.addKids(parent.getChild(index - 1).getKids());
-                n.addKids(node.getKids());
                 n.addKey(parent.getKeys().get(index - 1));
                 parent.removeKey(index - 1);
                 n.addKey(parent.getChild(index - 1).getKeys().get(0));
                 parent.removeChild(index);
                 parent.removeChild(index - 1);
-
             }
 
             parent.addChild(n);
+            if (parent.getKeys().size() == 0) {
+                checkNearNodes(parent);
+            }
+        }
 
-        }
-        if (parent.getKeys().size() == 0) {
-            checkNearNodes(parent);
-        }
     }
 
-
-//    private Node obhod(Node node, Integer value) {
-//        //  find(value);
-//        if (node == null) {
-//            System.out.println("Элемент не найден");
-//        } else {
-//            node.getKeys().remove(value);
-//          //  return cheeck(node, value);
-//
-//
-////                if (findNode.parent != null) {
-////                    if (findNode.parent.getKeys().size() > 1) {
-////                    } else {
-////                        System.out.println(value + " refactor node");
-////                    }
-////                } else {
-////                    System.out.println(value + " parent is null");
-////                }
-////            if (findNode.getKids().isEmpty()) {
-////            }
-//        }
-//        return node;
-//    }
-//    private Node cheeck(Node node, Integer value) {
-//
-//        if (node.getKids().isEmpty() && node.getKeys().isEmpty()) {
-//            for (int i = 0; i < node.parent.getKids().size(); i++) {
-//                node.addKey(node.parent.getKids().get(i).getKeys());
-//            }
-//            node.addKey(node.parent.getKeys());
-//            return stablich(node);
-//        }
-//        return null;
-//    }
-//
-//    private Node stablich(Node node) {
-//        if (node.getKeys().size() > weight - 1) {
-//            Node newre = new Node();
-//
-//            for (Integer c : node.getKeys()) {
-//                walker(newre, c);
-//            }
-//            return newre;
-//        } else {
-//            // node.parent = node;
-//            // node.getParent() = node;
-//            node.getParent().reload(node.getKeys());
-////            Node d = node.parent;
-////            d = node;
-//        }
-//        return node;
-//    }
 
 //    private void searchNode(Integer value, Node node) {
 //        for (int i = 0; i < node.getKeys().size(); i++) {
